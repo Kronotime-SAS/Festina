@@ -136,8 +136,7 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
 
-  console.log(data)
-  console.log(typeof data?.consent?.country);
+  console.log(data);
 
   return (
     <html lang="en">
