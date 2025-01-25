@@ -231,3 +231,110 @@ export const FOOTER_QUERY = `#graphql
   }
   ${MENU_FRAGMENT}
 ` as const;
+
+export const CHARACTERS_QUERY = `#graphql:rickAndMorty
+  query {
+    characters(page: 1) {
+      results {
+        name
+        id
+      }
+    }
+  }
+`;
+
+export const QUERY_ADMIN_API = `#graphql:adminAPI
+  query {
+    products(first: 20){
+      edges{
+        node{
+          id
+          title
+        }
+      }
+    }
+  }
+`;
+
+export const METAOBJECT_QUERY = `#graphql
+  fragment image on Image{
+    ...on Image {
+      url
+    }
+  }
+  fragment TypeFile on GenericFile{
+    ...on GenericFile {
+        alt
+        url
+    }
+  }
+  fragment TypeMediaImage on MediaImage{
+    ...on MediaImage {
+      alt
+      image { 
+        ...image
+      }
+    }
+  }
+  fragment Reference on MetafieldReference{
+    ...TypeFile
+    ...TypeMediaImage
+  }
+  fragment NodeMetafield on  MetafieldReferenceEdge{
+    node{
+      ...TypeMediaImage
+    }
+  }
+  fragment MetaObjectField on MetaobjectField{
+    ...on MetaobjectField{
+      key
+      reference {
+        ...Reference
+      }
+      references(first:20) {
+        edges{
+          ...NodeMetafield
+        }
+      }
+    }
+  }
+
+  fragment MetaObject on Metaobject{
+    ...on Metaobject {
+          fields {
+            ...on MetaobjectField {
+              key
+              type
+              reference{
+                ...on Metaobject{
+                  fields{
+                    ...on MetaobjectField{
+                      key
+                    }
+                  }
+                }
+              }
+              references(first:20){
+                edges{
+                  node{
+                    ...on Metaobject{
+                      fields{
+                        ...MetaObjectField
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }  
+        }
+  }
+
+  query MetaObject($id: ID){
+    metaobject(id: $id) {
+      type
+      handle
+      ...MetaObject
+    }
+  }
+` as const;

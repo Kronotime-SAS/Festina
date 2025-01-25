@@ -2,6 +2,8 @@ import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Await, useLoaderData, Link, type MetaFunction} from '@remix-run/react';
 import {Suspense} from 'react';
 import {Image, Money} from '@shopify/hydrogen';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 import type {
   FeaturedCollectionFragment,
   RecommendedProductsQuery,
@@ -10,6 +12,10 @@ import type {
 export const meta: MetaFunction = () => {
   return [{title: 'Home'}];
 };
+
+interface Slides {
+  title: string
+}
 
 export async function loader(args: LoaderFunctionArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -57,12 +63,48 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+  const slides = [
+    {
+      title:"Slides 1"
+    }, 
+    {
+      title:"Slides 2"
+    },
+    {
+      title:"Slides 3"
+    },
+    {
+      title:"Slides 4"
+    }]
   return (
     <div className="home">
+      <SliderBanner slides={slides} />
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
     </div>
   );
+}
+
+function SliderBanner({
+  slides
+}:{
+  slides: Slides[]
+}){
+  return (
+    <Swiper
+      spaceBetween={50}
+      slidesPerView={3}
+      onSlideChange={() => console.log('slide change')}
+      onSwiper={(swiper) => console.log(swiper)}
+    >
+      {
+        slides?.map((element, index) => (
+          <SwiperSlide key={index+1}>{element?.title}</SwiperSlide>
+        ))
+      }
+      ...
+    </Swiper>
+  )
 }
 
 function FeaturedCollection({

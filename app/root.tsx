@@ -16,7 +16,7 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from '~/components/PageLayout';
-import {FOOTER_QUERY, HEADER_QUERY} from '~/lib/fragments';
+import {FOOTER_QUERY, HEADER_QUERY, METAOBJECT_QUERY, CHARACTERS_QUERY, QUERY_ADMIN_API} from '~/lib/fragments';
 
 export type RootLoader = typeof loader;
 
@@ -72,7 +72,6 @@ export async function loader(args: LoaderFunctionArgs) {
       storefront,
       publicStorefrontId: env.PUBLIC_STOREFRONT_ID,
     }),
-    info: storefront,
     consent: {
       checkoutDomain: env.PUBLIC_CHECKOUT_DOMAIN,
       storefrontAccessToken: env.PUBLIC_STOREFRONT_API_TOKEN,
@@ -89,19 +88,27 @@ export async function loader(args: LoaderFunctionArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context}: LoaderFunctionArgs) {
-  const {storefront} = context;
+  const {storefront, rickAndMorty, adminAPI} = context;
 
-  const [header] = await Promise.all([
+  const [header, MetaObject, characters, products] = await Promise.all([
     storefront.query(HEADER_QUERY, {
       cache: storefront.CacheLong(),
       variables: {
         headerMenuHandle: 'main-menu', // Adjust to your header menu handle
       },
     }),
+    storefront.query(METAOBJECT_QUERY, {
+      cache: storefront.CacheLong(),
+      variables: {
+        id: 'gid://shopify/Metaobject/107464556589', // Adjust to your header menu handle
+      },
+    }),
+    rickAndMorty.query(CHARACTERS_QUERY),
+    adminAPI.query(QUERY_ADMIN_API)
     // Add other queries here, so that they are loaded in parallel
   ]);
 
-  return {header};
+  return {header, MetaObject, characters, products};
 }
 
 /**
@@ -136,7 +143,8 @@ export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
 
-  console.log(data);
+  console.log(data)
+  console.log(typeof data?.consent?.country);
 
   return (
     <html lang="en">

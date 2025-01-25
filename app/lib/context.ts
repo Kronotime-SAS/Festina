@@ -1,6 +1,8 @@
 import {createHydrogenContext} from '@shopify/hydrogen';
 import {AppSession} from '~/lib/session';
 import {CART_QUERY_FRAGMENT} from '~/lib/fragments';
+import {createRickAndMortyClient} from './createRickAndMortyClient.server';
+import {createAdminAPI} from './admin.server';
 
 /**
  * The context implementation is separate from server.ts
@@ -36,8 +38,25 @@ export async function createAppLoadContext(
     },
   });
 
+  // Create the Rick and Morty API Client
+  const rickAndMorty = createRickAndMortyClient({
+    cache,
+    waitUntil,
+    request,
+  });
+
+  //Admin API
+  const adminAPI = createAdminAPI({
+    env,
+    cache,
+    waitUntil,
+    request,
+  });
+
   return {
     ...hydrogenContext,
     // declare additional Remix loader context
+    rickAndMorty,
+    adminAPI
   };
 }
