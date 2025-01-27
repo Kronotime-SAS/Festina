@@ -258,14 +258,14 @@ export default function Addresses() {
 
   return (
     <div className="account-addresses">
-      <h2>Addresses</h2>
+      <h2>Direcciones</h2>
       <br />
       {!addresses.nodes.length ? (
-        <p>You have no addresses saved.</p>
+        <p>No tienes direcciones guardadas.</p>
       ) : (
         <div>
           <div>
-            <legend>Create address</legend>
+            <legend>Crear dirección</legend>
             <NewAddressForm />
           </div>
           <br />
@@ -323,7 +323,7 @@ function ExistingAddresses({
 }: Pick<CustomerFragment, 'addresses' | 'defaultAddress'>) {
   return (
     <div>
-      <legend>Existing addresses</legend>
+      <legend>Direcciones existentes</legend>
       {addresses.nodes.map((address) => (
         <AddressForm
           key={address.id}
