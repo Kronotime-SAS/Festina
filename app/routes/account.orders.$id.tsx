@@ -159,12 +159,6 @@ export default function OrderRoute() {
           </div>
         </div>
       </div>
-      <br />
-      <p>
-        <a target="_blank" href={order.statusPageUrl} rel="noreferrer">
-          Ver estado del pedido →
-        </a>
-      </p>
     </div>
   );
 }
