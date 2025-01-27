@@ -13,7 +13,7 @@ import type {
 import {PaginatedResourceSection} from '~/components/PaginatedResourceSection';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Orders'}];
+  return [{title: 'Pedidos'}];
 };
 
 export async function loader({request, context}: LoaderFunctionArgs) {
@@ -64,10 +64,10 @@ function OrdersTable({orders}: Pick<CustomerOrdersFragment, 'orders'>) {
 function EmptyOrders() {
   return (
     <div>
-      <p>You haven&apos;t placed any orders yet.</p>
+      <p>Aún no has realizado ningún pedido.</p>
       <br />
       <p>
-        <Link to="/collections">Start Shopping →</Link>
+        <Link to="/collections">Empezar a comprar →</Link>
       </p>
     </div>
   );
@@ -85,7 +85,7 @@ function OrderItem({order}: {order: OrderItemFragment}) {
         <p>{order.financialStatus}</p>
         {fulfillmentStatus && <p>{fulfillmentStatus}</p>}
         <Money data={order.totalPrice} />
-        <Link to={`/account/orders/${btoa(order.id)}`}>View Order →</Link>
+        <Link to={`/account/orders/${btoa(order.id)}`}>Ver pedido →</Link>
       </fieldset>
       <br />
     </>

@@ -32,7 +32,7 @@ export type ActionResponse = {
 };
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Addresses'}];
+  return [{title: 'Direcciones'}];
 };
 
 export async function loader({context}: LoaderFunctionArgs) {
@@ -51,7 +51,7 @@ export async function action({request, context}: ActionFunctionArgs) {
       ? String(form.get('addressId'))
       : null;
     if (!addressId) {
-      throw new Error('You must provide an address id.');
+      throw new Error('Debe proporcionar una identificación de dirección.');
     }
 
     // this will ensure redirecting to login never happen for mutatation
@@ -309,7 +309,7 @@ function NewAddressForm() {
             formMethod="POST"
             type="submit"
           >
-            {stateForMethod('POST') !== 'idle' ? 'Creating' : 'Create'}
+            {stateForMethod('POST') !== 'idle' ? 'Creando' : 'Crear'}
           </button>
         </div>
       )}
@@ -376,114 +376,115 @@ export function AddressForm({
     <Form id={addressId}>
       <fieldset>
         <input type="hidden" name="addressId" defaultValue={addressId} />
-        <label htmlFor="firstName">First name*</label>
+        <label htmlFor="firstName">Nombres*</label>
         <input
-          aria-label="First name"
+          aria-label="Nombres"
           autoComplete="given-name"
           defaultValue={address?.firstName ?? ''}
           id="firstName"
           name="firstName"
-          placeholder="First name"
+          placeholder="Nombres"
           required
           type="text"
         />
-        <label htmlFor="lastName">Last name*</label>
+        <label htmlFor="lastName">Apellidos*</label>
         <input
-          aria-label="Last name"
+          aria-label="Apellidos"
           autoComplete="family-name"
           defaultValue={address?.lastName ?? ''}
           id="lastName"
           name="lastName"
-          placeholder="Last name"
+          placeholder="Apellidos"
           required
           type="text"
         />
-        <label htmlFor="company">Company</label>
+        <label htmlFor="company">Documento*</label>
         <input
           aria-label="Company"
           autoComplete="organization"
           defaultValue={address?.company ?? ''}
           id="company"
           name="company"
-          placeholder="Company"
+          placeholder="Documento"
           type="text"
+          required
         />
-        <label htmlFor="address1">Address line*</label>
+        <label htmlFor="address1">Dirección*</label>
         <input
-          aria-label="Address line 1"
+          aria-label="Dirección"
           autoComplete="address-line1"
           defaultValue={address?.address1 ?? ''}
           id="address1"
           name="address1"
-          placeholder="Address line 1*"
+          placeholder="Dirección*"
           required
           type="text"
         />
-        <label htmlFor="address2">Address line 2</label>
+        <label htmlFor="address2">Casa, apartamento, etc (opcional)</label>
         <input
-          aria-label="Address line 2"
+          aria-label="Casa, apartamento, etc (opcional)"
           autoComplete="address-line2"
           defaultValue={address?.address2 ?? ''}
           id="address2"
           name="address2"
-          placeholder="Address line 2"
+          placeholder="Casa, apartamento, etc (opcional)"
           type="text"
         />
-        <label htmlFor="city">City*</label>
+        <label htmlFor="city">Ciudad*</label>
         <input
-          aria-label="City"
+          aria-label="Ciudad"
           autoComplete="address-level2"
           defaultValue={address?.city ?? ''}
           id="city"
           name="city"
-          placeholder="City"
+          placeholder="Ciudad"
           required
           type="text"
         />
-        <label htmlFor="zoneCode">State / Province*</label>
+        <label htmlFor="zoneCode">Departamento*</label>
         <input
-          aria-label="State/Province"
+          aria-label="Departamento"
           autoComplete="address-level1"
           defaultValue={address?.zoneCode ?? ''}
           id="zoneCode"
           name="zoneCode"
-          placeholder="State / Province"
+          placeholder="Departamento"
           required
           type="text"
         />
-        <label htmlFor="zip">Zip / Postal Code*</label>
+        <label htmlFor="zip">Código postal*</label>
         <input
-          aria-label="Zip"
+          aria-label="Código postal"
           autoComplete="postal-code"
           defaultValue={address?.zip ?? ''}
           id="zip"
           name="zip"
-          placeholder="Zip / Postal Code"
+          placeholder="Código postal"
           required
           type="text"
         />
-        <label htmlFor="territoryCode">Country Code*</label>
+        <label htmlFor="territoryCode">Pais*</label>
         <input
-          aria-label="territoryCode"
+          aria-label="Pais"
           autoComplete="country"
           defaultValue={address?.territoryCode ?? ''}
           id="territoryCode"
           name="territoryCode"
-          placeholder="Country"
+          placeholder="Pais"
           required
           type="text"
           maxLength={2}
         />
-        <label htmlFor="phoneNumber">Phone</label>
+        <label htmlFor="phoneNumber">Teléfono</label>
         <input
-          aria-label="Phone Number"
+          aria-label="Teléfono"
           autoComplete="tel"
           defaultValue={address?.phoneNumber ?? ''}
           id="phoneNumber"
           name="phoneNumber"
-          placeholder="+16135551111"
-          pattern="^\+?[1-9]\d{3,14}$"
+          placeholder="Teléfono"
           type="tel"
+          required
         />
         <div>
           <input
@@ -492,7 +493,7 @@ export function AddressForm({
             name="defaultAddress"
             type="checkbox"
           />
-          <label htmlFor="defaultAddress">Set as default address</label>
+          <label htmlFor="defaultAddress">Establecer como dirección predeterminada</label>
         </div>
         {error ? (
           <p>

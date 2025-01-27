@@ -20,7 +20,7 @@ export type ActionResponse = {
 };
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Profile'}];
+  return [{title: 'Perfil'}];
 };
 
 export async function loader({context}: LoaderFunctionArgs) {
@@ -33,7 +33,7 @@ export async function action({request, context}: ActionFunctionArgs) {
   const {customerAccount} = context;
 
   if (request.method !== 'PUT') {
-    return json({error: 'Method not allowed'}, {status: 405});
+    return json({error: 'Método no permitido'}, {status: 405});
   }
 
   const form = await request.formData();
@@ -65,7 +65,7 @@ export async function action({request, context}: ActionFunctionArgs) {
     }
 
     if (!data?.customerUpdate?.customer) {
-      throw new Error('Customer profile update failed.');
+      throw new Error('Error al actualizar el perfil del cliente.');
     }
 
     return json({
@@ -90,30 +90,30 @@ export default function AccountProfile() {
 
   return (
     <div className="account-profile">
-      <h2>My profile</h2>
+      <h2>Mi perfil</h2>
       <br />
       <Form method="PUT">
-        <legend>Personal information</legend>
+        <legend>Información Personal</legend>
         <fieldset>
-          <label htmlFor="firstName">First name</label>
+          <label htmlFor="firstName">Nombres</label>
           <input
             id="firstName"
             name="firstName"
             type="text"
             autoComplete="given-name"
-            placeholder="First name"
-            aria-label="First name"
+            placeholder="Nombres"
+            aria-label="Nombres"
             defaultValue={customer.firstName ?? ''}
             minLength={2}
           />
-          <label htmlFor="lastName">Last name</label>
+          <label htmlFor="lastName">Apellidos</label>
           <input
             id="lastName"
             name="lastName"
             type="text"
             autoComplete="family-name"
-            placeholder="Last name"
-            aria-label="Last name"
+            placeholder="Apellidos"
+            aria-label="Apellidos"
             defaultValue={customer.lastName ?? ''}
             minLength={2}
           />
@@ -128,7 +128,7 @@ export default function AccountProfile() {
           <br />
         )}
         <button type="submit" disabled={state !== 'idle'}>
-          {state !== 'idle' ? 'Updating' : 'Update'}
+          {state !== 'idle' ? 'Actualizando' : 'Actualizar'}
         </button>
       </Form>
     </div>

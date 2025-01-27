@@ -5,7 +5,7 @@ import type {OrderLineItemFullFragment} from 'customer-accountapi.generated';
 import {CUSTOMER_ORDER_QUERY} from '~/graphql/customer-account/CustomerOrderQuery';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
-  return [{title: `Order ${data?.order?.name}`}];
+  return [{title: `Pedido ${data?.order?.name}`}];
 };
 
 export async function loader({params, context}: LoaderFunctionArgs) {
@@ -22,7 +22,7 @@ export async function loader({params, context}: LoaderFunctionArgs) {
   );
 
   if (errors?.length || !data?.order) {
-    throw new Error('Order not found');
+    throw new Error('Pedido no encontrado');
   }
 
   const {order} = data;
@@ -68,9 +68,9 @@ export default function OrderRoute() {
         <table>
           <thead>
             <tr>
-              <th scope="col">Product</th>
-              <th scope="col">Price</th>
-              <th scope="col">Quantity</th>
+              <th scope="col">Producto</th>
+              <th scope="col">Precio</th>
+              <th scope="col">Cantidad</th>
               <th scope="col">Total</th>
             </tr>
           </thead>
@@ -85,10 +85,10 @@ export default function OrderRoute() {
               discountPercentage) && (
               <tr>
                 <th scope="row" colSpan={3}>
-                  <p>Discounts</p>
+                  <p>Descuentos</p>
                 </th>
                 <th scope="row">
-                  <p>Discounts</p>
+                  <p>Descuentos</p>
                 </th>
                 <td>
                   {discountPercentage ? (
@@ -112,10 +112,10 @@ export default function OrderRoute() {
             </tr>
             <tr>
               <th scope="row" colSpan={3}>
-                Tax
+                Impuestos
               </th>
               <th scope="row">
-                <p>Tax</p>
+                <p>Impuestos</p>
               </th>
               <td>
                 <Money data={order.totalTax!} />
@@ -135,7 +135,7 @@ export default function OrderRoute() {
           </tfoot>
         </table>
         <div>
-          <h3>Shipping Address</h3>
+          <h3>Dirección de envio</h3>
           {order?.shippingAddress ? (
             <address>
               <p>{order.shippingAddress.name}</p>
@@ -151,9 +151,9 @@ export default function OrderRoute() {
               )}
             </address>
           ) : (
-            <p>No shipping address defined</p>
+            <p>No hay dirección de envío definida</p>
           )}
-          <h3>Status</h3>
+          <h3>Estado</h3>
           <div>
             <p>{fulfillmentStatus}</p>
           </div>
@@ -162,7 +162,7 @@ export default function OrderRoute() {
       <br />
       <p>
         <a target="_blank" href={order.statusPageUrl} rel="noreferrer">
-          View Order Status →
+          Ver estado del pedido →
         </a>
       </p>
     </div>
