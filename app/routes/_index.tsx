@@ -1,21 +1,28 @@
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Await, useLoaderData, Link, type MetaFunction} from '@remix-run/react';
-import {Suspense} from 'react';
+import { Suspense, useRef, useState, useEffect } from 'react';
 import {Image, Money} from '@shopify/hydrogen';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 import type {
   FeaturedCollectionFragment,
   RecommendedProductsQuery,
 } from 'storefrontapi.generated';
+import {METAOBJECT_QUERY} from '~/lib/fragments';
+import { objectDestructuring } from '~/utility/objectdestructuring';
+import { MetaObject } from '~/interfeces/MetaObject';
+import { Slides } from '~/interfeces/Slides';
+import {Autoplay, Pagination, Navigation} from 'swiper/modules';
+import Icon from '~/components/shared/Icon';
+
+
+
 
 export const meta: MetaFunction = () => {
   return [{title: 'Home'}];
 };
-
-interface Slides {
-  title: string
-}
 
 export async function loader(args: LoaderFunctionArgs) {
   // Start fetching non-critical data without blocking time to first byte
@@ -32,13 +39,20 @@ export async function loader(args: LoaderFunctionArgs) {
  * needed to render the page. If it's unavailable, the whole page should 400 or 500 error.
  */
 async function loadCriticalData({context}: LoaderFunctionArgs) {
-  const [{collections}] = await Promise.all([
+  const [{collections}, MetaObject] = await Promise.all([
     context.storefront.query(FEATURED_COLLECTION_QUERY),
     // Add other queries here, so that they are loaded in parallel
+    context.storefront.query(METAOBJECT_QUERY, {
+      cache: context.storefront.CacheLong(),
+      variables: {
+        id: context.env.METAOBJECT_ID, // Adjust to your header menu handle
+      },
+    })
   ]);
 
   return {
     featuredCollection: collections.nodes[0],
+    MetaObject
   };
 }
 
@@ -61,49 +75,114 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
   };
 }
 
+
+
 export default function Homepage() {
+  
+
   const data = useLoaderData<typeof loader>();
-  const slides = [
-    {
-      title:"Slides 1"
-    }, 
-    {
-      title:"Slides 2"
-    },
-    {
-      title:"Slides 3"
-    },
-    {
-      title:"Slides 4"
-    }]
+  const imagesBanner = objectDestructuring(data);
+  console.log("cuantas veces recorre el home")
+  console.log(imagesBanner);
+
+  
+
   return (
-    <div className="home">
-      <SliderBanner slides={slides} />
+    <div className="w-full">
+      <SliderBanner slides={imagesBanner} />
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
     </div>
   );
 }
 
+
+
 function SliderBanner({
   slides
 }:{
   slides: Slides[]
 }){
+
+  const breakpoints = {
+    320: {
+      slidesPerView: 1,
+      spaceBetween: 10,
+    },
+    480: {
+      slidesPerView: 1.5,
+      spaceBetween: 10,
+    },
+    1280: {
+      slidesPerView: 4,
+      spaceBetween: 30,
+    },
+    1800: {
+      slidesPerView: 4,
+      spaceBetween: 30,
+    },
+  };
+
+  const swiperRef = useRef<any>(null);
+
+  useEffect(() => {
+    swiperRef.current = swiperRef.current && swiperRef.current.swiper;
+  }, []);
+
+  const handlePrevClick = () => {
+    console.log("Prev")
+    console.log(swiperRef.current)
+    if (swiperRef.current) {
+      swiperRef.current.slidePrev();
+    }
+  };
+  
+  const handleNextClick = () => {
+    console.log("Next");
+    console.log(swiperRef.current)
+    if (swiperRef.current) {
+      swiperRef.current.slideNext();
+    }
+  };
+
   return (
-    <Swiper
-      spaceBetween={50}
-      slidesPerView={3}
-      onSlideChange={() => console.log('slide change')}
-      onSwiper={(swiper) => console.log(swiper)}
-    >
-      {
-        slides?.map((element, index) => (
-          <SwiperSlide key={index+1}>{element?.title}</SwiperSlide>
-        ))
-      }
-      ...
-    </Swiper>
+    <div className='relative '>
+      <Swiper
+        ref={swiperRef}
+        autoplay={{
+          delay: 5000,
+          disableOnInteraction: false,
+        }} 
+        spaceBetween={0}
+        slidesPerView={1}
+        onSlideChange={() => console.log('slide change')}
+        onSwiper={(swiper) => console.log(swiper)}
+        pagination={{
+          clickable: true,
+        }}
+        navigation={true}
+        touchRatio={1} // Sensibilidad del drag
+        simulateTouch={true} // Habilita interacción táctil
+        touchStartPreventDefault={true} // Previene eventos de toque predeterminados
+        threshold={10} // Arrastre mínimo requerido antes de moverse
+        modules={[Autoplay, Pagination, Navigation]}
+      >
+        {
+          slides?.map((element, index) => (
+            <SwiperSlide key={index+1}>
+              <Image className='hidden md:block' src={element?.banner_desk}/>
+              <Image className='block md:hidden' src={element?.banner_mobile}/>
+            </SwiperSlide>
+          ))
+        }
+      </Swiper>
+      <button className='w-10 absolute right-0 z-40 top-[50%] hidden md:block' onClick={handleNextClick}>
+        <Icon icon={'arrow-right1'} size={'24'} color="white" />
+      </button>
+      <button className='w-10 absolute left-0 z-[999999999] top-[50%] hidden md:block' onClick={handlePrevClick}>
+        <Icon icon={'arrow-left1'} size={'24'} color="white" />
+      </button>
+    </div>
   )
 }
 

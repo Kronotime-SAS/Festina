@@ -16,7 +16,7 @@ import resetStyles from '~/styles/reset.css?url';
 import appStyles from '~/styles/app.css?url';
 import tailwindCss from './styles/tailwind.css?url';
 import {PageLayout} from '~/components/PageLayout';
-import {FOOTER_QUERY, HEADER_QUERY, METAOBJECT_QUERY, CHARACTERS_QUERY, QUERY_ADMIN_API} from '~/lib/fragments';
+import {FOOTER_QUERY, HEADER_QUERY, CHARACTERS_QUERY, QUERY_ADMIN_API} from '~/lib/fragments';
 
 export type RootLoader = typeof loader;
 
@@ -90,17 +90,11 @@ export async function loader(args: LoaderFunctionArgs) {
 async function loadCriticalData({context}: LoaderFunctionArgs) {
   const {storefront, rickAndMorty, adminAPI} = context;
 
-  const [header, MetaObject, characters, products] = await Promise.all([
+  const [header, characters, products] = await Promise.all([
     storefront.query(HEADER_QUERY, {
       cache: storefront.CacheLong(),
       variables: {
         headerMenuHandle: 'main-menu', // Adjust to your header menu handle
-      },
-    }),
-    storefront.query(METAOBJECT_QUERY, {
-      cache: storefront.CacheLong(),
-      variables: {
-        id: 'gid://shopify/Metaobject/107464556589', // Adjust to your header menu handle
       },
     }),
     rickAndMorty.query(CHARACTERS_QUERY),
@@ -108,7 +102,7 @@ async function loadCriticalData({context}: LoaderFunctionArgs) {
     // Add other queries here, so that they are loaded in parallel
   ]);
 
-  return {header, MetaObject, characters, products};
+  return {header, characters, products};
 }
 
 /**
@@ -142,9 +136,6 @@ function loadDeferredData({context}: LoaderFunctionArgs) {
 export function Layout({children}: {children?: React.ReactNode}) {
   const nonce = useNonce();
   const data = useRouteLoaderData<RootLoader>('root');
-
-  console.log(data)
-  console.log(typeof data?.consent?.country);
 
   return (
     <html lang="en">
