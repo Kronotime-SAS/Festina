@@ -42,6 +42,6 @@ export function createAdminAPI({
       );
       return result.data;
     }
-  
-    return {query};
+    const mutate = query;
+    return {query, mutate};
   }

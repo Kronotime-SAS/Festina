@@ -10,12 +10,16 @@ import type {
   FeaturedCollectionFragment,
   RecommendedProductsQuery,
 } from 'storefrontapi.generated';
-import {METAOBJECT_QUERY} from '~/lib/fragments';
+import {METAOBJECT_QUERY,MUTATION_NEWSLETTER_SUBSCRIBE} from '~/lib/fragments';
 import { objectDestructuring } from '~/utility/objectdestructuring';
 import { MetaObject } from '~/interfeces/MetaObject';
 import { Slides } from '~/interfeces/Slides';
 import {Autoplay, Pagination, Navigation} from 'swiper/modules';
 import Icon from '~/components/shared/Icon';
+import { json } from '@shopify/remix-oxygen';
+import type { ActionFunctionArgs } from '@shopify/remix-oxygen';
+
+import NewsletterForm from '../components/NewsletterForm';
 
 
 
@@ -32,6 +36,56 @@ export async function loader(args: LoaderFunctionArgs) {
   const criticalData = await loadCriticalData(args);
 
   return defer({...deferredData, ...criticalData});
+}
+
+// Acción para manejar el formulario POST
+export async function action({ request, context }: ActionFunctionArgs) {
+  const formData = await request.formData();
+  const email = formData.get('email');
+
+  // Validación básica
+  if (!email || typeof email !== 'string') {
+    return json({ error: 'Email inválido' }, { status: 400 });
+  }
+
+  const variables = {
+    input: {
+      email,
+      emailMarketingConsent: {
+        consentUpdatedAt: new Date(Date.now() - 10000).toISOString(), // 10 segundos en el pasado
+        marketingState: 'SUBSCRIBED',
+        marketingOptInLevel: 'SINGLE_OPT_IN',
+      },
+      tags: ['newsletter'],
+    },
+  };
+
+  console.log(variables.input);
+
+  try {
+    const response = await Promise.all([
+      context.adminAPI.mutate(MUTATION_NEWSLETTER_SUBSCRIBE, {
+        variables,
+      }),
+    ])
+
+    const result = await response;
+
+    console.log('Shopify mutation result:', JSON.stringify(result, null, 2));
+
+    const errors = result[0]?.data?.customerCreate?.customerUserErrors;
+
+    if (errors && errors.length > 0) {
+      // Devuelve todos los errores para mejor diagnóstico
+      return json({ error: errors.map(e => e.message).join(' | ') }, { status: 400 });
+    }
+
+    return json({ success: true });
+  } catch (err: any) {
+    // Muestra el error completo en consola y en la respuesta
+    console.error('Shopify mutation catch error:', err);
+    return json({ error: err?.message || JSON.stringify(err) || 'Hubo un error' }, { status: 500 });
+  }
 }
 
 /**
@@ -92,6 +146,7 @@ export default function Homepage() {
       <SliderBanner slides={imagesBanner} />
       <FeaturedCollection collection={data.featuredCollection} />
       <RecommendedProducts products={data.recommendedProducts} />
+      <NewsletterForm/>
     </div>
   );
 }

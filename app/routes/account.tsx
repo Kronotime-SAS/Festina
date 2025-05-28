@@ -1,6 +1,8 @@
 import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Form, NavLink, Outlet, useLoaderData} from '@remix-run/react';
 import {CUSTOMER_DETAILS_QUERY} from '~/graphql/customer-account/CustomerDetailsQuery';
+import { Profile } from '~/components/customer/Profile';
+import { NavigationCustom } from '~/components/shared/Navigation/NavigationCustom';
 
 export function shouldRevalidate() {
   return true;
@@ -28,6 +30,8 @@ export async function loader({context}: LoaderFunctionArgs) {
 export default function AccountLayout() {
   const {customer} = useLoaderData<typeof loader>();
 
+  console.log(customer);
+
   const heading = customer
     ? customer.firstName
       ? `Bienvenido, ${customer.firstName}`
@@ -47,42 +51,34 @@ export default function AccountLayout() {
 }
 
 function AccountMenu() {
-  function isActiveStyle({
-    isActive,
-    isPending,
-  }: {
-    isActive: boolean;
-    isPending: boolean;
-  }) {
-    return {
-      fontWeight: isActive ? 'bold' : undefined,
-      color: isPending ? 'grey' : 'black',
-    };
-  }
+  
 
   return (
-    <nav role="navigation">
-      <NavLink to="/account/orders" style={isActiveStyle}>
-        Ordenes &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/profile" style={isActiveStyle}>
-        &nbsp; Perfil &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/addresses" style={isActiveStyle}>
-        &nbsp; Direcciones &nbsp;
-      </NavLink>
-      &nbsp;|&nbsp;
-      <Logout />
-    </nav>
+    <>
+      <NavigationCustom menu={
+        [
+          {
+            title: "Perfil",
+            url: "/account/profile"
+          },
+          {
+            title: "Ordenes",
+            url: "/account/orders"
+          },
+          {
+            title: "Direcciones",
+            url: "/account/addresses"
+          },
+          {
+            title: "logout",
+            url: ""
+          }
+        ]
+      } />
+      <Profile/>
+    </>
+    
   );
 }
 
-function Logout() {
-  return (
-    <Form className="account-logout" method="POST" action="/account/logout">
-      &nbsp;<button type="submit">Cerrar Sesión</button>
-    </Form>
-  );
-}
+

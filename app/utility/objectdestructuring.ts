@@ -17,9 +17,6 @@ export const objectDestructuring = (data: any) => {
           ]
         }
     } } = data;
-
-    console.log(edges);
-    console.log(key);
     
 
     switch(key){
@@ -27,8 +24,14 @@ export const objectDestructuring = (data: any) => {
         edges.map(({node}: any) => {
             let images: Slides = {
                 banner_desk: "",
-                banner_mobile: ""
+                banner_mobile: "",
+                url: "",
+                order: 0,
             };
+
+            console.log("aqui estoy reset valores en imagen slider")
+
+            console.log(node);
 
             if(node?.fields?.find( ({key}: {key: string}) => key == "banner_desk") != undefined){
                 images.banner_desk = node?.fields?.find( ({key}: {key: string}) => key == "banner_desk")?.reference?.image?.url;

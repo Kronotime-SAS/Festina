@@ -256,6 +256,21 @@ export const QUERY_ADMIN_API = `#graphql:adminAPI
   }
 `;
 
+export const MUTATION_NEWSLETTER_SUBSCRIBE = `#graphql:adminAPI
+  mutation customerCreate($input: CustomerInput!) {
+      customerCreate(input: $input) {
+        customer {
+          id
+          email
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+  }
+`;
+
 export const METAOBJECT_QUERY = `#graphql
   fragment image on Image{
     ...on Image {
