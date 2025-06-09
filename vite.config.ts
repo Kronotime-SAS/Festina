@@ -41,6 +41,6 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ['9ab7-186-114-230-35.ngrok-free.app']
+    allowedHosts: ['d250-167-0-38-120.ngrok-free.app', 'testing-colombia-ce-sin-netsuite.myshopify.com']
   },
 });
